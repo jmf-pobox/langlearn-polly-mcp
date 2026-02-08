@@ -45,10 +45,12 @@ VOICES: dict[str, VoiceConfig] = {
     "joanna": VoiceConfig(voice_id="Joanna", language_code="en-US", engine="neural"),
     "matthew": VoiceConfig(voice_id="Matthew", language_code="en-US", engine="neural"),
     # German
-    "marlene": VoiceConfig(voice_id="Marlene", language_code="de-DE", engine="neural"),
-    "hans": VoiceConfig(voice_id="Hans", language_code="de-DE", engine="neural"),
-    "vicki": VoiceConfig(voice_id="Vicki", language_code="de-DE", engine="standard"),
-    "daniel": VoiceConfig(voice_id="Daniel", language_code="de-DE", engine="standard"),
+    "marlene": VoiceConfig(
+        voice_id="Marlene", language_code="de-DE", engine="standard"
+    ),
+    "hans": VoiceConfig(voice_id="Hans", language_code="de-DE", engine="standard"),
+    "vicki": VoiceConfig(voice_id="Vicki", language_code="de-DE", engine="neural"),
+    "daniel": VoiceConfig(voice_id="Daniel", language_code="de-DE", engine="neural"),
     # Russian
     "tatyana": VoiceConfig(
         voice_id="Tatyana", language_code="ru-RU", engine="standard"

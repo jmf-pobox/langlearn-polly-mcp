@@ -33,7 +33,7 @@ class TestVoiceConfig:
         hans = VOICES["hans"]
         assert hans.voice_id == "Hans"
         assert hans.language_code == "de-DE"
-        assert hans.engine == "neural"
+        assert hans.engine == "standard"
 
 
 class TestResolveVoice:
