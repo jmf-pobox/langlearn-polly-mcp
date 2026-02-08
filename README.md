@@ -1,6 +1,8 @@
 # langlearn-tts
 
-AWS Polly text-to-speech for language learning. Provides both an MCP server (for Claude Desktop) and a CLI with identical functionality.
+Text-to-speech toolkit for language learning. Provides both an MCP server (for Claude Desktop) and a CLI with identical functionality.
+
+Currently supports **AWS Polly** with **ElevenLabs** and **OpenAI TTS** backends planned. The goal: pick the TTS provider that fits your setup — no AWS account required once alternative backends ship.
 
 ## Features
 
@@ -10,7 +12,7 @@ AWS Polly text-to-speech for language learning. Provides both an MCP server (for
 - **Pair batch** — batch process vocabulary lists as stitched pairs
 - **Auto-play** — MCP tools play audio immediately after synthesis via `afplay`
 - **Configurable speech rate** — default 90% speed for learner-friendly pacing
-- **All Polly voices** — any voice from the [AWS Polly voice list](https://docs.aws.amazon.com/polly/latest/dg/voicelist.html) works out of the box (93 voices across 41 languages)
+- **93 voices, 41 languages** — any voice from the [AWS Polly voice list](https://docs.aws.amazon.com/polly/latest/dg/voicelist.html) works out of the box
 
 ## Prerequisites
 
@@ -188,6 +190,20 @@ All four tools are available in Claude Desktop once the server is configured:
 | `synthesize_pair_batch` | Multiple pairs, optionally merged |
 
 Each tool accepts `auto_play` (default: true) to play audio immediately after synthesis.
+
+## Roadmap
+
+### Provider Abstraction Layer
+
+A `TTSProvider` protocol that decouples CLI/MCP tools from any specific backend. Enables `--provider` flag, provider auto-detection from API keys, and provider-specific `doctor` checks.
+
+### ElevenLabs Backend
+
+Highest voice quality. 29+ languages, 5,000+ voices, voice cloning. Setup: `pip install langlearn-tts[elevenlabs]` + `ELEVENLABS_API_KEY` env var. Free tier: 10K chars/month.
+
+### OpenAI TTS Backend
+
+Broadest adoption — most users already have an OpenAI key. 6 built-in voices, 50+ languages. Setup: `pip install langlearn-tts[openai]` + `OPENAI_API_KEY` env var. $15/1M chars (tts-1).
 
 ## Development
 

@@ -145,6 +145,10 @@ When you discover work that isn't part of the current task:
 
 ## Development Workflow
 
+### Changelog
+
+Update `CHANGELOG.md` with every user-visible change. Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format. Add entries under `[Unreleased]`. Categories: Added, Changed, Deprecated, Removed, Fixed, Security.
+
 ### Micro-Commits
 
 - One logical change per commit. 1-5 files, under 100 lines.
