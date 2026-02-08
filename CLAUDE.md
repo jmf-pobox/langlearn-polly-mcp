@@ -149,6 +149,24 @@ When you discover work that isn't part of the current task:
 
 Update `CHANGELOG.md` with every user-visible change. Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format. Add entries under `[Unreleased]`. Categories: Added, Changed, Deprecated, Removed, Fixed, Security.
 
+### Branch Discipline
+
+All code changes go on feature branches. Never commit directly to main.
+
+```bash
+git checkout -b feat/short-description main
+# ... work, commit, push ...
+gh pr create --title "feat: description" --body "..."
+# merge via PR, then delete branch
+```
+
+| Prefix | Use |
+|--------|-----|
+| `feat/` | New features |
+| `fix/` | Bug fixes |
+| `refactor/` | Code improvements |
+| `docs/` | Documentation only |
+
 ### Micro-Commits
 
 - One logical change per commit. 1-5 files, under 100 lines.
@@ -163,6 +181,23 @@ Update `CHANGELOG.md` with every user-visible change. Follow [Keep a Changelog](
 | `test:` | Adding or updating tests |
 | `docs:` | Documentation |
 | `chore:` | Build, dependencies, CI |
+
+### Release Workflow
+
+Every release follows this exact sequence. No steps skipped.
+
+1. **Bump version** in `pyproject.toml` and `src/langlearn_tts/__init__.py` (keep in sync)
+2. **Move `[Unreleased]`** entries in `CHANGELOG.md` to new version section with date
+3. **Run all quality gates** — ruff, mypy, pyright, pytest
+4. **Commit**: `chore: release vX.Y.Z`
+5. **Build**: `rm -rf dist/ && uv build && uvx twine check dist/*`
+6. **Upload to PyPI**: `uvx twine upload dist/*`
+7. **Tag**: `git tag vX.Y.Z`
+8. **Push**: `git push origin main vX.Y.Z`
+9. **GitHub release**: `gh release create vX.Y.Z --title "vX.Y.Z" --notes-file -` (use CHANGELOG entry)
+10. **Verify**: `uv tool install --upgrade langlearn-tts && langlearn-tts doctor`
+
+A release is not complete until all 10 steps are done.
 
 ### Session Close Protocol
 
