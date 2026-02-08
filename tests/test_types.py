@@ -66,7 +66,7 @@ class TestSynthesisRequest:
     def test_default_rate(self):
         cfg = VOICES["joanna"]
         req = SynthesisRequest(text="hello", voice=cfg)
-        assert req.rate == 75
+        assert req.rate == 90
 
     def test_custom_rate(self):
         cfg = VOICES["joanna"]

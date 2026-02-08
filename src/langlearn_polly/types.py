@@ -86,8 +86,8 @@ class SynthesisRequest:
 
     text: str
     voice: VoiceConfig
-    rate: int = 75
-    """Speech rate as a percentage (e.g. 75 = 75% speed)."""
+    rate: int = 90
+    """Speech rate as a percentage (e.g. 90 = 90% speed)."""
 
 
 @dataclass(frozen=True)

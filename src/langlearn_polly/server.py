@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -51,11 +52,21 @@ def _resolve_output_path(
     return output_dir / default_name
 
 
+def _play_audio(path: Path) -> None:
+    """Play an audio file using macOS afplay (non-blocking)."""
+    subprocess.Popen(
+        ["afplay", str(path)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+
 @mcp.tool()
 def synthesize(
     text: str,
     voice: str = "joanna",
-    rate: int = 75,
+    rate: int = 90,
+    auto_play: bool = True,
     output_path: str | None = None,
     output_dir: str | None = None,
 ) -> str:
@@ -63,10 +74,12 @@ def synthesize(
 
     Args:
         text: The text to convert to speech.
-        voice: Voice name (joanna, matthew, hans, marlene,
-            tatyana, maxim, seoyeon). Defaults to joanna.
-        rate: Speech rate as percentage (75 = 75% speed, good for
-            language learners). Defaults to 75.
+        voice: Voice name (joanna, matthew, hans, marlene, vicki,
+            daniel, tatyana, maxim, seoyeon). Defaults to joanna.
+        rate: Speech rate as percentage (90 = 90% speed, good for
+            language learners). Defaults to 90.
+        auto_play: Open the file in the default audio player after
+            synthesis. Defaults to true.
         output_path: Full path for the output file. If not provided,
             a file is auto-generated in output_dir.
         output_dir: Directory for output. Defaults to POLLY_OUTPUT_DIR
@@ -87,6 +100,8 @@ def synthesize(
 
     client = PollyClient()
     result = client.synthesize(request, path)
+    if auto_play:
+        _play_audio(result.file_path)
     return str(result.to_dict())
 
 
@@ -94,9 +109,10 @@ def synthesize(
 def synthesize_batch(
     texts: list[str],
     voice: str = "joanna",
-    rate: int = 75,
+    rate: int = 90,
     merge: bool = False,
     pause_ms: int = 500,
+    auto_play: bool = True,
     output_dir: str | None = None,
 ) -> str:
     """Synthesize multiple texts to MP3 files using AWS Polly.
@@ -109,6 +125,8 @@ def synthesize_batch(
             files per text. Defaults to false.
         pause_ms: Pause between segments in milliseconds when merging.
             Defaults to 500.
+        auto_play: Open the file(s) in the default audio player after
+            synthesis. Defaults to true.
         output_dir: Directory for output files. Defaults to
             POLLY_OUTPUT_DIR env var or ~/polly-audio/.
 
@@ -125,6 +143,9 @@ def synthesize_batch(
 
     client = PollyClient()
     results = client.synthesize_batch(requests, dir_path, strategy, pause_ms)
+    if auto_play:
+        for r in results:
+            _play_audio(r.file_path)
     return str([r.to_dict() for r in results])
 
 
@@ -134,8 +155,9 @@ def synthesize_pair(
     text2: str,
     voice1: str = "joanna",
     voice2: str = "hans",
-    rate: int = 75,
+    rate: int = 90,
     pause_ms: int = 500,
+    auto_play: bool = True,
     output_path: str | None = None,
     output_dir: str | None = None,
 ) -> str:
@@ -152,6 +174,7 @@ def synthesize_pair(
         rate: Speech rate as percentage. Defaults to 75.
         pause_ms: Pause between the two texts in milliseconds.
             Defaults to 500.
+        auto_play: Play the audio after synthesis. Defaults to true.
         output_path: Full path for the output file.
         output_dir: Directory for output. Defaults to
             POLLY_OUTPUT_DIR env var or ~/polly-audio/.
@@ -173,6 +196,8 @@ def synthesize_pair(
 
     client = PollyClient()
     result = client.synthesize_pair(text1, req1, text2, req2, path, pause_ms)
+    if auto_play:
+        _play_audio(result.file_path)
     return str(result.to_dict())
 
 
@@ -181,9 +206,10 @@ def synthesize_pair_batch(
     pairs: list[list[str]],
     voice1: str = "joanna",
     voice2: str = "hans",
-    rate: int = 75,
+    rate: int = 90,
     pause_ms: int = 500,
     merge: bool = False,
+    auto_play: bool = True,
     output_dir: str | None = None,
 ) -> str:
     """Synthesize multiple text pairs and stitch each into MP3 files.
@@ -200,6 +226,7 @@ def synthesize_pair_batch(
             Defaults to 500.
         merge: If true, produce one merged file instead of separate
             files per pair. Defaults to false.
+        auto_play: Play the audio after synthesis. Defaults to true.
         output_dir: Directory for output files. Defaults to
             POLLY_OUTPUT_DIR env var or ~/polly-audio/.
 
@@ -224,6 +251,9 @@ def synthesize_pair_batch(
 
     client = PollyClient()
     results = client.synthesize_pair_batch(pair_requests, dir_path, strategy, pause_ms)
+    if auto_play:
+        for r in results:
+            _play_audio(r.file_path)
     return str([r.to_dict() for r in results])
 
 

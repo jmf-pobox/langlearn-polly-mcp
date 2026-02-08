@@ -56,10 +56,10 @@ def main(verbose: bool) -> None:
 )
 @click.option(
     "--rate",
-    default=75,
+    default=90,
     show_default=True,
     type=int,
-    help="Speech rate as percentage (e.g. 75 = 75%% speed).",
+    help="Speech rate as percentage (e.g. 90 = 90%% speed).",
 )
 @click.option(
     "--output",
@@ -90,7 +90,7 @@ def synthesize(text: str, voice: str, rate: int, output: Path | None) -> None:
 )
 @click.option(
     "--rate",
-    default=75,
+    default=90,
     show_default=True,
     type=int,
     help="Speech rate as percentage.",
@@ -164,7 +164,7 @@ def synthesize_batch(
 )
 @click.option(
     "--rate",
-    default=75,
+    default=90,
     show_default=True,
     type=int,
     help="Speech rate as percentage.",
@@ -224,7 +224,7 @@ def synthesize_pair(
 )
 @click.option(
     "--rate",
-    default=75,
+    default=90,
     show_default=True,
     type=int,
     help="Speech rate as percentage.",
