@@ -33,7 +33,7 @@ def _default_output_dir() -> Path:
     env_dir = os.environ.get("POLLY_OUTPUT_DIR")
     if env_dir:
         return Path(env_dir)
-    return Path.home() / "polly-audio"
+    return Path.home() / "Claude-Audio"
 
 
 def _resolve_output_dir(output_dir: str | None) -> Path:
@@ -83,7 +83,7 @@ def synthesize(
         output_path: Full path for the output file. If not provided,
             a file is auto-generated in output_dir.
         output_dir: Directory for output. Defaults to POLLY_OUTPUT_DIR
-            env var or ~/polly-audio/.
+            env var or ~/Claude-Audio/.
 
     Returns:
         JSON string with file_path, text, and voice fields.
@@ -128,7 +128,7 @@ def synthesize_batch(
         auto_play: Open the file(s) in the default audio player after
             synthesis. Defaults to true.
         output_dir: Directory for output files. Defaults to
-            POLLY_OUTPUT_DIR env var or ~/polly-audio/.
+            POLLY_OUTPUT_DIR env var or ~/Claude-Audio/.
 
     Returns:
         JSON string with list of results, each containing file_path,
@@ -177,7 +177,7 @@ def synthesize_pair(
         auto_play: Play the audio after synthesis. Defaults to true.
         output_path: Full path for the output file.
         output_dir: Directory for output. Defaults to
-            POLLY_OUTPUT_DIR env var or ~/polly-audio/.
+            POLLY_OUTPUT_DIR env var or ~/Claude-Audio/.
 
     Returns:
         JSON string with file_path, text, and voice fields.
@@ -228,7 +228,7 @@ def synthesize_pair_batch(
             files per pair. Defaults to false.
         auto_play: Play the audio after synthesis. Defaults to true.
         output_dir: Directory for output files. Defaults to
-            POLLY_OUTPUT_DIR env var or ~/polly-audio/.
+            POLLY_OUTPUT_DIR env var or ~/Claude-Audio/.
 
     Returns:
         JSON string with list of results.

@@ -99,7 +99,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 **Important:** Claude Desktop does not inherit your shell PATH. All paths must be absolute. Find your `uv` path with `which uv`.
 
-The `POLLY_OUTPUT_DIR` environment variable sets the default output directory. If unset, files are saved to `~/polly-audio/`.
+The `POLLY_OUTPUT_DIR` environment variable sets the default output directory. If unset, files are saved to `~/Claude-Audio/`.
 
 Restart Claude Desktop after editing the config.
 
