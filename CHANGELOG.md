@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-02-09
+
+### Added
+- MCP tool docstrings document ElevenLabs eleven_v3 audio tags — free-form performance cues like `[tired]`, `[excited]`, `[whisper]`, `[sigh]` that control voice delivery
+
 ## [0.4.1] - 2026-02-09
 
 ### Fixed
