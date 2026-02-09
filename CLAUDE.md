@@ -110,7 +110,7 @@ Tests mirror source: `test_types.py`, `test_core.py`, `test_cli.py`, `test_polly
 
 | Metric | Value |
 |--------|-------|
-| Unit tests | 111 |
+| Unit tests | 122 |
 | All pass | Required |
 
 ## Issue Tracking with Beads
