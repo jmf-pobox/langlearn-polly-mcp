@@ -22,6 +22,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+__all__ = ["PollyClient", "stitch_audio"]
+
 
 class PollyClient:
     """Wraps the boto3 Polly client for text-to-speech synthesis.

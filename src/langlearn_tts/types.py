@@ -20,6 +20,15 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    "MergeStrategy",
+    "SynthesisRequest",
+    "SynthesisResult",
+    "VoiceConfig",
+    "generate_filename",
+    "resolve_voice",
+]
+
 # Engine preference order: best quality first.
 _ENGINE_PREFERENCE: list[str] = ["neural", "generative", "long-form", "standard"]
 
@@ -56,6 +65,9 @@ _voices_loaded: bool = False
 
 def _best_engine(supported: list[str]) -> EngineType:
     """Pick the best engine from a list of supported engines."""
+    if not supported:
+        msg = "Voice has no supported engines"
+        raise ValueError(msg)
     for engine in _ENGINE_PREFERENCE:
         if engine in supported:
             return engine  # type: ignore[return-value]
