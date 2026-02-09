@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import platform
 import shutil
 import sys
@@ -13,7 +14,7 @@ from typing import cast
 import click
 
 from langlearn_tts.core import TTSClient
-from langlearn_tts.providers import get_provider
+from langlearn_tts.providers import auto_detect_provider, get_provider
 from langlearn_tts.types import (
     MergeStrategy,
     SynthesisRequest,
@@ -58,14 +59,22 @@ def _get_provider(ctx: click.Context) -> TTSProvider:
     "provider_name",
     default=None,
     envvar="LANGLEARN_TTS_PROVIDER",
-    help="TTS provider (e.g. polly). Default: auto-detect.",
+    help="TTS provider (e.g. polly, openai). Default: auto-detect.",
+)
+@click.option(
+    "--model",
+    default=None,
+    envvar="LANGLEARN_TTS_MODEL",
+    help="Model name (e.g. tts-1, tts-1-hd). Provider-specific.",
 )
 @click.pass_context
-def main(ctx: click.Context, verbose: bool, provider_name: str | None) -> None:
+def main(
+    ctx: click.Context, verbose: bool, provider_name: str | None, model: str | None
+) -> None:
     """langlearn-tts: Text-to-speech for language learning."""
     _configure_logging(verbose)
     ctx.ensure_object(dict)
-    ctx.obj["provider"] = get_provider(provider_name)
+    ctx.obj["provider"] = get_provider(provider_name, model=model)
 
 
 @main.command()
@@ -389,6 +398,9 @@ def doctor(ctx: click.Context) -> None:
     else:
         _check(_FAIL, f"Python {v.major}.{v.minor}.{v.micro} (requires 3.13+)")
 
+    # Active provider
+    _check(_PASS, f"Provider: {provider.name}")
+
     # ffmpeg
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg:
@@ -470,6 +482,36 @@ def doctor(ctx: click.Context) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _detect_install_provider(provider_name: str | None) -> str:
+    """Detect the provider to configure for install.
+
+    If explicit, use it. Otherwise delegates to auto_detect_provider().
+    """
+    if provider_name:
+        return provider_name.lower()
+    return auto_detect_provider()
+
+
+def _build_install_env(provider: str, audio_dir: Path) -> dict[str, str]:
+    """Build the env dict for the MCP server config entry.
+
+    Uses ``${VAR}`` references for secrets so the config file reads
+    values from the MCP server's process environment at launch time,
+    rather than storing literal keys on disk.
+    """
+    env: dict[str, str] = {
+        "LANGLEARN_TTS_PROVIDER": provider,
+        "LANGLEARN_TTS_OUTPUT_DIR": str(audio_dir),
+    }
+    if provider == "openai":
+        if not os.environ.get("OPENAI_API_KEY"):
+            raise click.ClickException(
+                "OPENAI_API_KEY is not set. Export it or use --provider polly."
+            )
+        env["OPENAI_API_KEY"] = "${OPENAI_API_KEY}"
+    return env
+
+
 @main.command()
 @click.option(
     "--output-dir",
@@ -482,7 +524,15 @@ def doctor(ctx: click.Context) -> None:
     default=None,
     help="Path to uvx binary. Default: auto-detect via shutil.which.",
 )
-def install(output_dir: Path | None, uvx_path: str | None) -> None:
+@click.option(
+    "--provider",
+    "install_provider",
+    default=None,
+    help="TTS provider (polly, openai). Default: auto-detect.",
+)
+def install(
+    output_dir: Path | None, uvx_path: str | None, install_provider: str | None
+) -> None:
     """Register the MCP server with Claude Desktop."""
     if platform.system() != "Darwin":
         click.echo(
@@ -501,6 +551,10 @@ def install(output_dir: Path | None, uvx_path: str | None) -> None:
     # Resolve output directory
     audio_dir = output_dir or _default_output_dir()
     audio_dir.mkdir(parents=True, exist_ok=True)
+
+    # Detect provider and build env
+    detected = _detect_install_provider(install_provider)
+    env = _build_install_env(detected, audio_dir)
 
     # Read or create config
     config_path = _claude_desktop_config_path()
@@ -522,9 +576,7 @@ def install(output_dir: Path | None, uvx_path: str | None) -> None:
     data["mcpServers"]["langlearn-tts"] = {
         "command": uvx,
         "args": ["--from", "langlearn-tts", "langlearn-tts-server"],
-        "env": {
-            "LANGLEARN_TTS_OUTPUT_DIR": str(audio_dir),
-        },
+        "env": env,
     }
 
     config_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
@@ -534,6 +586,7 @@ def install(output_dir: Path | None, uvx_path: str | None) -> None:
     else:
         click.echo("Registered langlearn-tts MCP server.")
 
+    click.echo(f"Provider: {detected}")
     click.echo(f"Config: {config_path}")
     click.echo(f"Output: {audio_dir}")
     click.echo("Restart Claude Desktop to activate.")

@@ -12,11 +12,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `providers` package with `PollyProvider`, `get_provider()`, and provider registry
 - `--provider` CLI flag and `LANGLEARN_TTS_PROVIDER` env var for provider selection
 - `TTSClient` generic orchestrator in `core.py` (replaces `PollyClient`)
+- OpenAI TTS provider (`providers/openai.py`) with 9 voices (alloy, ash, coral, echo, fable, onyx, nova, sage, shimmer)
+- `--model` CLI flag and `LANGLEARN_TTS_MODEL` env var for model selection (e.g. tts-1, tts-1-hd)
+- Auto-chunking for OpenAI texts exceeding 4096 characters (sentence then word boundary splitting)
+- Auto-detection: defaults to OpenAI when `OPENAI_API_KEY` is set
 
 ### Changed
+- `install` command auto-detects provider and writes `LANGLEARN_TTS_PROVIDER` + `OPENAI_API_KEY` (when applicable) into Claude Desktop config
+- `install` command accepts `--provider` flag to override auto-detection
+- `doctor` command shows active provider name
 - `SynthesisRequest.voice` is now `str` (voice name) instead of `VoiceConfig`
 - All boto3 usage isolated to `providers/polly.py` — core, CLI, and server are provider-agnostic
 - `doctor` command delegates provider-specific checks to `provider.check_health()`
+- `get_provider()` accepts `**kwargs` for provider-specific options (e.g. `model`)
+
+### Fixed
+- OpenAI chunking: `_split_at_words` now character-splits words exceeding `max_chars` instead of emitting oversized chunks
 
 ### Removed
 - `PollyClient` class from `core.py` (replaced by `TTSClient`)
