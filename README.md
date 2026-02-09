@@ -140,7 +140,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-Claude Desktop does not inherit your shell environment. All paths must be absolute. Find your `uvx` path with `which uvx`.
+Claude Desktop does not inherit your shell environment. All paths must be absolute, and API keys (like `OPENAI_API_KEY`) must be literal values in this file (env var references are not supported). Find your `uvx` path with `which uvx`.
 
 | Env var | Required | Description |
 |---------|----------|-------------|
