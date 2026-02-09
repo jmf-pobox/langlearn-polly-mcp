@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-02-09
+
+### Fixed
+- ElevenLabs voice resolution: API returns names with descriptions (e.g. "Adam - dominant, firm"); lookups of short names like "adam" now resolve correctly
+- MCP tool voice defaults: replaced hardcoded Polly voice names (`joanna`, `hans`) with provider-aware defaults (`rachel` for ElevenLabs, `joanna` for Polly, `nova` for OpenAI)
+- MCP tool docstrings: voice examples are now provider-agnostic so LLM clients pick valid voices
+- ElevenLabs health check: ApiError output now shows clean message instead of full HTTP headers
+- CLI `--help`: `--provider` and `--model` flags now mention ElevenLabs
+- Test isolation: install tests no longer leak `ELEVENLABS_API_KEY` from environment
+
+### Added
+- `default_voice` property on `TTSProvider` protocol
+
 ## [0.4.0] - 2026-02-09
 
 ### Added
