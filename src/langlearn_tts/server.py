@@ -100,12 +100,19 @@ def synthesize(
     """Synthesize text to an MP3 audio file.
 
     Args:
-        text: The text to convert to speech.
+        text: The text to convert to speech. With ElevenLabs eleven_v3,
+            you can embed audio tags in square brackets anywhere in the
+            text to control delivery — e.g. [tired], [excited], [whisper],
+            [sad], [sigh], [laughs], [dramatic tone]. Tags are free-form;
+            the model interprets them as performance cues. Combine with
+            punctuation (ellipsis for pauses, ! for emphasis) for best
+            results. Tags only work with ElevenLabs eleven_v3 model.
         voice: Voice name. Provider-specific (e.g. rachel for ElevenLabs,
             joanna for Polly, nova for OpenAI). Defaults to provider's
             default voice.
         rate: Speech rate as percentage (90 = 90% speed, good for
-            language learners). Defaults to 90.
+            language learners). Defaults to 90. ElevenLabs ignores rate;
+            use audio tags like [rushed] or [drawn out] instead.
         auto_play: Open the file in the default audio player after
             synthesis. Defaults to true.
         output_path: Full path for the output file. If not provided,
@@ -169,7 +176,8 @@ def synthesize_batch(
     """Synthesize multiple texts to MP3 files.
 
     Args:
-        texts: List of texts to synthesize.
+        texts: List of texts to synthesize. With ElevenLabs eleven_v3,
+            embed audio tags like [tired], [excited], [whisper] in text.
         voice: Voice name for all texts. Defaults to provider's default.
         rate: Speech rate as percentage. Defaults to 90.
         merge: If true, produce one merged file instead of separate
@@ -240,8 +248,10 @@ def synthesize_pair(
     learning pairs like "strong" (English) + "stark" (German).
 
     Args:
-        text1: First text (typically English).
-        text2: Second text (typically target language).
+        text1: First text (typically English). With ElevenLabs eleven_v3,
+            embed audio tags like [tired], [excited], [whisper] in text.
+        text2: Second text (typically target language). Same audio tag
+            support as text1.
         voice1: Voice for text1. Defaults to provider's default voice.
         voice2: Voice for text2. Defaults to provider's default voice.
         rate: Speech rate as percentage. Defaults to 90.
@@ -319,7 +329,8 @@ def synthesize_pair_batch(
     vocabulary lists like [["strong","stark"], ["house","Haus"]].
 
     Args:
-        pairs: List of [text1, text2] pairs.
+        pairs: List of [text1, text2] pairs. With ElevenLabs eleven_v3,
+            texts can include audio tags like [tired], [excited].
         voice1: Voice for all first texts. Defaults to provider's default.
         voice2: Voice for all second texts. Defaults to provider's default.
         rate: Speech rate as percentage. Defaults to 90.
