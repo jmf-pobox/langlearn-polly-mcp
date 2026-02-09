@@ -5,10 +5,9 @@ from __future__ import annotations
 import logging
 import re
 import tempfile
+import warnings
 from pathlib import Path
 from typing import Any
-
-from pydub import AudioSegment
 
 from langlearn_tts.types import (
     MergeStrategy,
@@ -17,6 +16,15 @@ from langlearn_tts.types import (
     TTSProvider,
     generate_filename,
 )
+
+# pydub 0.25.1 uses unescaped parentheses in regex strings (utils.py lines
+# 300, 301, 310, 314) which emit SyntaxWarning on Python 3.13 during bytecode
+# compilation. This is an upstream bug; filter before importing pydub.
+# Must match on message, not module — compile-time warnings ignore module filters.
+warnings.filterwarnings(
+    "ignore", category=SyntaxWarning, message=r"invalid escape sequence"
+)
+from pydub import AudioSegment  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
