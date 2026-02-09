@@ -76,7 +76,7 @@ class TestSynthesize:
     def test_synthesize_non_english(
         self, provider: ElevenLabsProvider, tmp_path: Path
     ) -> None:
-        """German text with eleven_v3 (multilingual)."""
+        """German text synthesis."""
         request = SynthesisRequest(
             text="Guten Tag, wie geht es Ihnen?", voice="rachel", rate=100
         )
