@@ -8,6 +8,7 @@ import os
 import platform
 import shutil
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
@@ -50,6 +51,40 @@ def _get_provider(ctx: click.Context) -> TTSProvider:
     """Retrieve the TTSProvider from the Click context."""
     obj = cast("dict[str, TTSProvider]", ctx.ensure_object(dict))  # pyright: ignore[reportUnknownMemberType]
     return obj["provider"]
+
+
+def _voice_settings_options[F: Callable[..., object]](fn: F) -> F:
+    """Shared ElevenLabs voice-settings options for synthesis commands."""
+    for decorator in reversed(
+        [
+            click.option(
+                "--stability",
+                default=None,
+                type=click.FloatRange(0.0, 1.0),
+                help="ElevenLabs voice stability (0.0-1.0).",
+            ),
+            click.option(
+                "--similarity",
+                default=None,
+                type=click.FloatRange(0.0, 1.0),
+                help="ElevenLabs voice similarity boost (0.0-1.0).",
+            ),
+            click.option(
+                "--style",
+                default=None,
+                type=click.FloatRange(0.0, 1.0),
+                help="ElevenLabs voice style/expressiveness (0.0-1.0).",
+            ),
+            click.option(
+                "--speaker-boost",
+                is_flag=True,
+                default=False,
+                help="Enable ElevenLabs speaker boost.",
+            ),
+        ]
+    ):
+        fn = decorator(fn)  # pyright: ignore[reportAssignmentType]
+    return fn
 
 
 @click.group()
@@ -99,30 +134,7 @@ def main(
     type=click.Path(path_type=Path),
     help="Output file path. Defaults to auto-generated name in pwd.",
 )
-@click.option(
-    "--stability",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice stability (0.0-1.0).",
-)
-@click.option(
-    "--similarity",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice similarity boost (0.0-1.0).",
-)
-@click.option(
-    "--style",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice style/expressiveness (0.0-1.0).",
-)
-@click.option(
-    "--speaker-boost",
-    is_flag=True,
-    default=False,
-    help="Enable ElevenLabs speaker boost.",
-)
+@_voice_settings_options
 @click.pass_context
 def synthesize(
     ctx: click.Context,
@@ -190,30 +202,7 @@ def synthesize(
     type=int,
     help="Pause between segments in ms (used with --merge).",
 )
-@click.option(
-    "--stability",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice stability (0.0-1.0).",
-)
-@click.option(
-    "--similarity",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice similarity boost (0.0-1.0).",
-)
-@click.option(
-    "--style",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice style/expressiveness (0.0-1.0).",
-)
-@click.option(
-    "--speaker-boost",
-    is_flag=True,
-    default=False,
-    help="Enable ElevenLabs speaker boost.",
-)
+@_voice_settings_options
 @click.argument("input_file", type=click.Path(exists=True, path_type=Path))
 @click.pass_context
 def synthesize_batch(
@@ -307,30 +296,7 @@ def synthesize_batch(
     type=click.Path(path_type=Path),
     help="Output file path.",
 )
-@click.option(
-    "--stability",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice stability (0.0-1.0).",
-)
-@click.option(
-    "--similarity",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice similarity boost (0.0-1.0).",
-)
-@click.option(
-    "--style",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice style/expressiveness (0.0-1.0).",
-)
-@click.option(
-    "--speaker-boost",
-    is_flag=True,
-    default=False,
-    help="Enable ElevenLabs speaker boost.",
-)
+@_voice_settings_options
 @click.pass_context
 def synthesize_pair(
     ctx: click.Context,
@@ -421,30 +387,7 @@ def synthesize_pair(
     default=False,
     help="Merge all pair outputs into a single file.",
 )
-@click.option(
-    "--stability",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice stability (0.0-1.0).",
-)
-@click.option(
-    "--similarity",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice similarity boost (0.0-1.0).",
-)
-@click.option(
-    "--style",
-    default=None,
-    type=click.FloatRange(0.0, 1.0),
-    help="ElevenLabs voice style/expressiveness (0.0-1.0).",
-)
-@click.option(
-    "--speaker-boost",
-    is_flag=True,
-    default=False,
-    help="Enable ElevenLabs speaker boost.",
-)
+@_voice_settings_options
 @click.argument("input_file", type=click.Path(exists=True, path_type=Path))
 @click.pass_context
 def synthesize_pair_batch(

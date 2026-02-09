@@ -114,7 +114,10 @@ class ElevenLabsProvider:
 
     def resolve_voice(self, name: str) -> str:
         """Validate and resolve a voice name to its canonical form."""
-        return self._resolve_voice_id(name)
+        self._resolve_voice_id(name)
+        if _VOICE_ID_RE.match(name):
+            return name
+        return name.lower()
 
     def check_health(self) -> list[HealthCheck]:
         """Check ElevenLabs API key and subscription status."""
@@ -180,12 +183,17 @@ class ElevenLabsProvider:
 
     def _build_voice_settings(self, request: SynthesisRequest) -> Any | None:  # pyright: ignore[reportExplicitAny]
         """Build VoiceSettings from request fields, or None for defaults."""
-        if (
-            request.stability is None
-            and request.similarity is None
-            and request.style is None
-            and request.speaker_boost is None
-        ):
+        kwargs: dict[str, Any] = {}
+        if request.stability is not None:
+            kwargs["stability"] = request.stability
+        if request.similarity is not None:
+            kwargs["similarity_boost"] = request.similarity
+        if request.style is not None:
+            kwargs["style"] = request.style
+        if request.speaker_boost is not None:
+            kwargs["use_speaker_boost"] = request.speaker_boost
+
+        if not kwargs:
             return None
 
         from elevenlabs.types import (
@@ -193,10 +201,7 @@ class ElevenLabsProvider:
         )
 
         return VoiceSettings(  # pyright: ignore[reportUnknownVariableType, reportCallIssue]
-            stability=request.stability,
-            similarity_boost=request.similarity,
-            style=request.style,
-            use_speaker_boost=request.speaker_boost,
+            **kwargs,
         )
 
     def _single_synthesize(

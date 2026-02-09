@@ -22,13 +22,13 @@ class TestElevenLabsProviderResolveVoice:
         self, elevenlabs_provider: ElevenLabsProvider
     ) -> None:
         result = elevenlabs_provider.resolve_voice("rachel")
-        assert result == "21m00Tcm4TlvDq8ikWAM"
+        assert result == "rachel"
 
     def test_resolve_case_insensitive(
         self, elevenlabs_provider: ElevenLabsProvider
     ) -> None:
-        assert elevenlabs_provider.resolve_voice("Rachel") == "21m00Tcm4TlvDq8ikWAM"
-        assert elevenlabs_provider.resolve_voice("RACHEL") == "21m00Tcm4TlvDq8ikWAM"
+        assert elevenlabs_provider.resolve_voice("Rachel") == "rachel"
+        assert elevenlabs_provider.resolve_voice("RACHEL") == "rachel"
 
     def test_resolve_voice_id_directly(
         self, elevenlabs_provider: ElevenLabsProvider
@@ -49,7 +49,7 @@ class TestElevenLabsProviderResolveVoice:
         try:
             provider = ElevenLabsProvider(client=mock_elevenlabs_client)
             result = provider.resolve_voice("rachel")
-            assert result == "21m00Tcm4TlvDq8ikWAM"
+            assert result == "rachel"
             mock_elevenlabs_client.voices.get_all.assert_called_once()
         finally:
             elevenlabs.VOICES.clear()
