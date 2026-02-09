@@ -495,8 +495,9 @@ def _detect_install_provider(provider_name: str | None) -> str:
 def _build_install_env(provider: str, audio_dir: Path) -> dict[str, str]:
     """Build the env dict for the MCP server config entry.
 
-    Uses ${VAR} references instead of literal secrets so the config
-    file inherits values from the user's shell environment at runtime.
+    Uses ``${VAR}`` references for secrets so the config file reads
+    values from the MCP server's process environment at launch time,
+    rather than storing literal keys on disk.
     """
     env: dict[str, str] = {
         "LANGLEARN_TTS_PROVIDER": provider,
