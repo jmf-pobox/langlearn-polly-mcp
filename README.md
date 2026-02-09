@@ -132,7 +132,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
       "command": "/absolute/path/to/uvx",
       "args": ["--from", "langlearn-tts", "langlearn-tts-server"],
       "env": {
-        "POLLY_OUTPUT_DIR": "/absolute/path/to/output/directory"
+        "LANGLEARN_TTS_OUTPUT_DIR": "/absolute/path/to/output/directory"
       }
     }
   }
@@ -141,7 +141,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 Claude Desktop does not inherit your shell PATH. All paths must be absolute. Find your `uvx` path with `which uvx`.
 
-The `POLLY_OUTPUT_DIR` environment variable sets the default output directory. If unset, files are saved to `~/Claude-Audio/`.
+The `LANGLEARN_TTS_OUTPUT_DIR` environment variable sets the default output directory. If unset, files are saved to `~/Claude-Audio/`.
 
 Restart Claude Desktop after editing the config.
 

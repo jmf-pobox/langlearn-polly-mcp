@@ -490,7 +490,7 @@ def install(output_dir: Path | None, uvx_path: str | None) -> None:
         "command": uvx,
         "args": ["--from", "langlearn-tts", "langlearn-tts-server"],
         "env": {
-            "POLLY_OUTPUT_DIR": str(audio_dir),
+            "LANGLEARN_TTS_OUTPUT_DIR": str(audio_dir),
         },
     }
 
