@@ -13,10 +13,18 @@ import pytest
 from langlearn_tts.providers.polly import PollyProvider
 from langlearn_tts.types import SynthesisRequest
 
+
+def _has_aws_credentials() -> bool:
+    """Check whether AWS credentials are available via env vars or credentials file."""
+    if os.environ.get("AWS_ACCESS_KEY_ID") or os.environ.get("AWS_PROFILE"):
+        return True
+    return Path("~/.aws/credentials").expanduser().exists()
+
+
 pytestmark = [
     pytest.mark.integration,
     pytest.mark.skipif(
-        not (os.environ.get("AWS_ACCESS_KEY_ID") or os.environ.get("AWS_PROFILE")),
+        not _has_aws_credentials(),
         reason="AWS credentials not configured",
     ),
 ]
