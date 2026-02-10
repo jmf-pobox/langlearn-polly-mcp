@@ -6,10 +6,12 @@ Run with: uv run pytest tests/test_polly_integration.py -v -m integration
 from __future__ import annotations
 
 import os
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
 
+import langlearn_tts.providers.polly as polly
 from langlearn_tts.providers.polly import PollyProvider
 from langlearn_tts.types import SynthesisRequest
 
@@ -28,6 +30,18 @@ pytestmark = [
         reason="AWS credentials not configured",
     ),
 ]
+
+
+@pytest.fixture(autouse=True)
+def _reset_voice_cache() -> Iterator[None]:  # pyright: ignore[reportUnusedFunction]
+    """Clear the mock voice cache so integration tests hit the real Polly API.
+
+    The conftest autouse fixture sets _voices_loaded=True with 4 mock voices.
+    This fixture runs after it and resets the state for each test.
+    """
+    polly.VOICES.clear()
+    polly._voices_loaded = False  # pyright: ignore[reportPrivateUsage]
+    yield
 
 
 @pytest.fixture
@@ -103,29 +117,15 @@ class TestSynthesize:
 
 
 class TestLanguageSupport:
-    def test_list_voices_from_api(
-        self, provider: PollyProvider, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_list_voices_from_api(self, provider: PollyProvider) -> None:
         """list_voices() fetches real voices from the API."""
-        import langlearn_tts.providers.polly as polly
-
-        monkeypatch.setattr(polly, "VOICES", {})
-        monkeypatch.setattr(polly, "_voices_loaded", False)
-
         voices = provider.list_voices()
 
         assert len(voices) > 0
         assert voices == sorted(voices)
 
-    def test_list_voices_filtered_by_language(
-        self, provider: PollyProvider, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_list_voices_filtered_by_language(self, provider: PollyProvider) -> None:
         """list_voices('de') returns only German voices."""
-        import langlearn_tts.providers.polly as polly
-
-        monkeypatch.setattr(polly, "VOICES", {})
-        monkeypatch.setattr(polly, "_voices_loaded", False)
-
         voices = provider.list_voices(language="de")
 
         assert len(voices) > 0
