@@ -33,7 +33,7 @@ uv run pytest tests/ -v
 
 - Unit tests use mocks. No API keys or network access required.
 - Integration tests are marked `@pytest.mark.integration` and require provider API keys.
-- Mock Polly/OpenAI responses need valid MP3 bytes — use `AudioSegment.silent()` from pydub.
+- Mock Polly/OpenAI responses need valid MP3 bytes — create a silent segment with `AudioSegment.silent()` from pydub and export to MP3 bytes.
 
 ## Commit Messages
 
