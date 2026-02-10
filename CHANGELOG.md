@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-10
+
 ### Added
 - Language-first TTS: language is now a first-class concept across the entire stack
 - `--language`/`--lang` option on CLI `synthesize` and `synthesize-batch` commands
