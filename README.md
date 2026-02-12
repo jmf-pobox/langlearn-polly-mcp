@@ -19,7 +19,7 @@ You need an account with at least one text-to-speech provider:
 
 ### 2. Install in Claude Desktop
 
-Download the `.mcpb` Desktop Extension from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you for your API key and an output directory.
+[**Download langlearn-tts.mcpb**](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest/download/langlearn-tts.mcpb) and double-click to install. Claude Desktop will prompt you for your API key and an output directory.
 
 ### 3. Set up a tutor project (optional)
 

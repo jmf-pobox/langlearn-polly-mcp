@@ -37,5 +37,9 @@ echo "Building langlearn-tts $version .mcpb bundle..."
 mkdir -p dist
 mcpb pack . "dist/langlearn-tts-${version}.mcpb"
 
+# Create stable-named copy for GitHub release (latest/download/langlearn-tts.mcpb).
+cp "dist/langlearn-tts-${version}.mcpb" "dist/langlearn-tts.mcpb"
+
 echo "Built: dist/langlearn-tts-${version}.mcpb"
+echo "       dist/langlearn-tts.mcpb (stable name)"
 echo "Size: $(du -h "dist/langlearn-tts-${version}.mcpb" | cut -f1)"
