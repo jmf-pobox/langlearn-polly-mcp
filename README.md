@@ -11,18 +11,6 @@ The pair mode is the core workflow: give it an English word and its translation,
 
 Available as both a **Claude Desktop MCP server** (ask Claude to generate audio in conversation) and a **CLI** with identical functionality. Supports **ElevenLabs** (highest quality, 70+ languages), **AWS Polly** (best per-language pronunciation, 93 voices), and **OpenAI TTS** (easiest setup, 9 voices).
 
-## Features
-
-- **Single synthesis** — convert text to MP3 in any supported language
-- **Batch synthesis** — synthesize multiple texts, optionally merged into one file
-- **Pair synthesis** — stitch two languages together: `[English] [pause] [L2]`
-- **Pair batch** — batch-process vocabulary lists as stitched pairs
-- **Auto-play** — MCP tools play audio immediately after synthesis
-- **Configurable speech rate** — default 90% for learner-friendly pacing
-- **Three providers** — ElevenLabs (5,000+ voices, 70+ languages), AWS Polly (93 voices, 41 languages), or OpenAI TTS (9 voices, 57 languages)
-- **Voice settings** — ElevenLabs stability, similarity, style, and speaker boost controls
-- **Provider selection** — auto-detects ElevenLabs when `ELEVENLABS_API_KEY` is set; falls back to Polly; use `--provider` to override
-
 ## Quick Start
 
 ### 1. Install in Claude Desktop
@@ -111,6 +99,18 @@ For Polly, AWS credentials are read from `~/.aws/credentials`.
 ### Other MCP clients
 
 langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
+
+## Features
+
+- **Single synthesis** — convert text to MP3 in any supported language
+- **Batch synthesis** — synthesize multiple texts, optionally merged into one file
+- **Pair synthesis** — stitch two languages together: `[English] [pause] [L2]`
+- **Pair batch** — batch-process vocabulary lists as stitched pairs
+- **Auto-play** — MCP tools play audio immediately after synthesis
+- **Configurable speech rate** — default 90% for learner-friendly pacing
+- **Three providers** — ElevenLabs (5,000+ voices, 70+ languages), AWS Polly (93 voices, 41 languages), or OpenAI TTS (9 voices, 57 languages)
+- **Voice settings** — ElevenLabs stability, similarity, style, and speaker boost controls
+- **Provider selection** — auto-detects ElevenLabs when `ELEVENLABS_API_KEY` is set; falls back to Polly; use `--provider` to override
 
 ## Voices
 
