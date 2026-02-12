@@ -4,7 +4,7 @@
   "display_name": "Language Learning TTS",
   "version": "0.5.1",
   "description": "Text-to-speech for language learning — synthesize vocabulary, phrases, and bilingual pairs with ElevenLabs, AWS Polly, or OpenAI.",
-  "long_description": "Synthesize text to MP3 audio files for language learning. Supports single text, batch, bilingual pairs, and batch pairs with configurable voice, speed, and pause settings.\n\n**Providers:** ElevenLabs (premium, 70+ languages), AWS Polly (28 languages), OpenAI (multilingual).\n\n**Requirements:**\n- One provider's API credentials (see configuration fields below)\n- AWS Polly users: run `aws configure` to set up credentials before use\n- **ffmpeg** is required for pair synthesis and batch merge (`brew install ffmpeg` on macOS, `apt install ffmpeg` on Linux)\n\nSingle text synthesis works without ffmpeg.",
+  "long_description": "Synthesize text to MP3 audio files for language learning. Supports single text, batch, bilingual pairs, and batch pairs with configurable voice, speed, and pause settings.\n\nProviders: ElevenLabs (premium, 70+ languages), AWS Polly (28 languages), OpenAI (multilingual).\n\nRequires one provider's API credentials (see configuration fields below). AWS Polly users must run `aws configure` first. ffmpeg is needed for pair synthesis and batch merge; single text synthesis works without it.",
   "author": {
     "name": "JF",
     "email": "jmf@pobox.com",
