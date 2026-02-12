@@ -79,6 +79,20 @@ For Polly, AWS credentials are read from `~/.aws/credentials`.
 
 langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
 
+## Quick Start
+
+Once Claude Desktop is set up, try these in a conversation:
+
+> "Say 'Guten Morgen' in German"
+
+> "Create an audio flashcard: 'good morning' in English, then 'Guten Morgen' in German"
+
+> "Synthesize these Spanish words as a merged audio file: hola, gracias, por favor, de nada"
+
+> "Generate pair flashcards for these German vocabulary words: strong/stark, house/Haus, book/Buch"
+
+Audio files are saved to your output directory (`~/langlearn-audio` by default) and play automatically.
+
 ## AI Tutor Prompts
 
 langlearn-tts ships with 28 ready-made AI tutor prompts — one for each combination of 7 languages and 4 levels. Paste a prompt into a Claude Desktop Project's Instructions field, and Claude becomes a language tutor that generates audio during lessons.
