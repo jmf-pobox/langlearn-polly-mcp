@@ -15,29 +15,7 @@ Available as both a **Claude Desktop MCP server** (ask Claude to generate audio 
 
 ### 1. Install in Claude Desktop
 
-Pick **one** of the three options below. You do not need to do all three.
-
-**Option A: Desktop Extension (recommended)** — Download the `.mcpb` Desktop Extension bundle from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you to paste your API key and choose an output directory — no manual configuration needed. The provider is auto-detected from which API key you provide.
-
-**Option B: CLI install** — Requires the `langlearn-tts` CLI (see [CLI Installation](#cli-installation) below). Run `langlearn-tts install`, then restart Claude Desktop.
-
-**Option C: Manual configuration** — Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "langlearn-tts": {
-      "command": "/absolute/path/to/uvx",
-      "args": ["--from", "langlearn-tts", "langlearn-tts-server"],
-      "env": {
-        "LANGLEARN_TTS_OUTPUT_DIR": "/absolute/path/to/output/directory"
-      }
-    }
-  }
-}
-```
-
-Claude Desktop does not inherit your shell environment. API keys must be literal values (env var references are not supported). Restart after editing.
+Download the `.mcpb` Desktop Extension bundle from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you to paste your API key and choose an output directory — no manual configuration needed. The provider is auto-detected from which API key you provide.
 
 ### 2. Set up a tutor project (optional)
 
@@ -46,17 +24,10 @@ langlearn-tts ships with 28 ready-made AI tutor prompts — one for each combina
 1. In Claude Desktop, click **Projects** in the sidebar
 2. Click **Create Project** and name it (e.g., "German with Herr Schmidt")
 3. Open the project, click **Set custom instructions**
-4. Paste the prompt content into the Instructions field
+4. Copy a prompt from the [prompts directory](https://github.com/jmf-pobox/langlearn-tts-mcp/tree/main/src/langlearn_tts/prompts) and paste it into the Instructions field
 5. Start a new conversation within that project
 
 Using a Project keeps the tutor persona scoped to language learning. Other conversations are unaffected.
-
-Browse and copy prompts with the CLI:
-
-```bash
-langlearn-tts prompt list
-langlearn-tts prompt show german-high-school | pbcopy
-```
 
 | Language | High School | 1st Year | 2nd Year | Advanced |
 |----------|-------------|----------|----------|----------|
@@ -68,7 +39,7 @@ langlearn-tts prompt show german-high-school | pbcopy
 | Japanese | Tanaka-sensei | Yamamoto-sensei | Suzuki-sensei | Mori-sensei |
 | Chinese | Laoshi Wang | Professor Chen | Professor Zhang | Professor Wei |
 
-Each prompt creates a tutor persona calibrated to the student's level, based on [Mollick & Mollick's "Assigning AI" framework](https://ssrn.com/abstract=4475995). Customize any prompt by adjusting student background, voice selection, speech rate, or focus areas.
+Each prompt is calibrated to the student's level, based on [Mollick & Mollick's "Assigning AI" framework](https://ssrn.com/abstract=4475995).
 
 ### 3. Try it out
 
@@ -83,22 +54,6 @@ In any Claude Desktop conversation, try:
 > "Generate pair flashcards for these German vocabulary words: strong/stark, house/Haus, book/Buch"
 
 Audio files are saved to your output directory (`~/langlearn-audio` by default) and play automatically.
-
-### Environment variables
-
-| Env var | Required | Description |
-|---------|----------|-------------|
-| `LANGLEARN_TTS_PROVIDER` | No | `elevenlabs`, `polly` (default when no API key), or `openai` |
-| `ELEVENLABS_API_KEY` | For ElevenLabs | Your API key |
-| `OPENAI_API_KEY` | For OpenAI | Your API key |
-| `LANGLEARN_TTS_OUTPUT_DIR` | No | Output directory (default: `~/langlearn-audio`) |
-| `LANGLEARN_TTS_MODEL` | No | Model name. ElevenLabs: `eleven_v3` (default). OpenAI: `tts-1`, `tts-1-hd` |
-
-For Polly, AWS credentials are read from `~/.aws/credentials`.
-
-### Other MCP clients
-
-langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
 
 ## Features
 
@@ -267,6 +222,55 @@ cd langlearn-tts-mcp
 uv sync --all-extras
 uv run langlearn-tts --help
 ```
+
+### Claude Desktop setup via CLI
+
+```bash
+langlearn-tts install
+```
+
+Writes to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS). Options: `--provider NAME`, `--output-dir PATH`, `--uvx-path PATH`. Restart Claude Desktop after running.
+
+Or add manually to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "langlearn-tts": {
+      "command": "/absolute/path/to/uvx",
+      "args": ["--from", "langlearn-tts", "langlearn-tts-server"],
+      "env": {
+        "LANGLEARN_TTS_OUTPUT_DIR": "/absolute/path/to/output/directory"
+      }
+    }
+  }
+}
+```
+
+Claude Desktop does not inherit your shell environment. API keys must be literal values (env var references are not supported). Restart after editing.
+
+### Browse tutor prompts
+
+```bash
+langlearn-tts prompt list
+langlearn-tts prompt show german-high-school | pbcopy
+```
+
+### Environment variables
+
+| Env var | Required | Description |
+|---------|----------|-------------|
+| `LANGLEARN_TTS_PROVIDER` | No | `elevenlabs`, `polly` (default when no API key), or `openai` |
+| `ELEVENLABS_API_KEY` | For ElevenLabs | Your API key |
+| `OPENAI_API_KEY` | For OpenAI | Your API key |
+| `LANGLEARN_TTS_OUTPUT_DIR` | No | Output directory (default: `~/langlearn-audio`) |
+| `LANGLEARN_TTS_MODEL` | No | Model name. ElevenLabs: `eleven_v3` (default). OpenAI: `tts-1`, `tts-1-hd` |
+
+For Polly, AWS credentials are read from `~/.aws/credentials`.
+
+### Other MCP clients
+
+langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
 
 ## CLI Usage
 
