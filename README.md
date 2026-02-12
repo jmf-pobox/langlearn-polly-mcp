@@ -23,29 +23,17 @@ Available as both a **Claude Desktop MCP server** (ask Claude to generate audio 
 - **Voice settings** — ElevenLabs stability, similarity, style, and speaker boost controls
 - **Provider selection** — auto-detects ElevenLabs when `ELEVENLABS_API_KEY` is set; falls back to Polly; use `--provider` to override
 
-## Claude Desktop Setup
+## Quick Start
+
+### 1. Install in Claude Desktop
 
 Pick **one** of the three options below. You do not need to do all three.
 
-### Option A: Desktop Extension (recommended)
+**Option A: Desktop Extension (recommended)** — Download the `.mcpb` Desktop Extension bundle from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you to paste your API key and choose an output directory — no manual configuration needed. The provider is auto-detected from which API key you provide.
 
-Download the `.mcpb` Desktop Extension bundle from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you to paste your API key and choose an output directory — no manual configuration needed.
+**Option B: CLI install** — Requires the `langlearn-tts` CLI (see [CLI Installation](#cli-installation) below). Run `langlearn-tts install`, then restart Claude Desktop.
 
-The provider is auto-detected from which API key you provide. ElevenLabs and OpenAI keys are entered during install. For AWS Polly, run `aws configure` in a terminal first — no key is needed in the extension config.
-
-### Option B: CLI install
-
-Requires the `langlearn-tts` CLI (see [CLI Installation](#cli-installation) below).
-
-```bash
-langlearn-tts install
-```
-
-Writes to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS). Options: `--provider NAME`, `--output-dir PATH`, `--uvx-path PATH`. Restart Claude Desktop after running.
-
-### Option C: Manual configuration
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+**Option C: Manual configuration** — Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ```json
 {
@@ -63,6 +51,51 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 Claude Desktop does not inherit your shell environment. API keys must be literal values (env var references are not supported). Restart after editing.
 
+### 2. Set up a tutor project (optional)
+
+langlearn-tts ships with 28 ready-made AI tutor prompts — one for each combination of 7 languages and 4 levels. Setting up a project gives Claude a tutor persona that generates audio during lessons.
+
+1. In Claude Desktop, click **Projects** in the sidebar
+2. Click **Create Project** and name it (e.g., "German with Herr Schmidt")
+3. Open the project, click **Set custom instructions**
+4. Paste the prompt content into the Instructions field
+5. Start a new conversation within that project
+
+Using a Project keeps the tutor persona scoped to language learning. Other conversations are unaffected.
+
+Browse and copy prompts with the CLI:
+
+```bash
+langlearn-tts prompt list
+langlearn-tts prompt show german-high-school | pbcopy
+```
+
+| Language | High School | 1st Year | 2nd Year | Advanced |
+|----------|-------------|----------|----------|----------|
+| German | Herr Schmidt | Professorin Weber | Professor Hartmann | Professor Becker |
+| Spanish | Profesora Elena | Profesor Garcia | Profesora Carmen | Profesora Reyes |
+| French | Madame Moreau | Professeur Laurent | Professeur Dubois | Professeur Beaumont |
+| Russian | Irina Petrovna | Professor Dmitri | Professor Natasha | Professor Mikhail |
+| Korean | Kim-seonsaengnim | Professor Park | Professor Kim | Professor Yoon |
+| Japanese | Tanaka-sensei | Yamamoto-sensei | Suzuki-sensei | Mori-sensei |
+| Chinese | Laoshi Wang | Professor Chen | Professor Zhang | Professor Wei |
+
+Each prompt creates a tutor persona calibrated to the student's level, based on [Mollick & Mollick's "Assigning AI" framework](https://ssrn.com/abstract=4475995). Customize any prompt by adjusting student background, voice selection, speech rate, or focus areas.
+
+### 3. Try it out
+
+In any Claude Desktop conversation, try:
+
+> "Say 'Guten Morgen' in German"
+
+> "Create an audio flashcard: 'good morning' in English, then 'Guten Morgen' in German"
+
+> "Synthesize these Spanish words as a merged audio file: hola, gracias, por favor, de nada"
+
+> "Generate pair flashcards for these German vocabulary words: strong/stark, house/Haus, book/Buch"
+
+Audio files are saved to your output directory (`~/langlearn-audio` by default) and play automatically.
+
 ### Environment variables
 
 | Env var | Required | Description |
@@ -78,58 +111,6 @@ For Polly, AWS credentials are read from `~/.aws/credentials`.
 ### Other MCP clients
 
 langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
-
-## AI Tutor Prompts
-
-langlearn-tts ships with 28 ready-made AI tutor prompts — one for each combination of 7 languages and 4 levels. Paste a prompt into a Claude Desktop Project's Instructions field, and Claude becomes a language tutor that generates audio during lessons.
-
-### Browse prompts
-
-```bash
-# List all available prompts
-langlearn-tts prompt list
-
-# Print a prompt (pipe to clipboard with pbcopy on macOS)
-langlearn-tts prompt show german-high-school | pbcopy
-```
-
-### Set up a Claude Desktop Project
-
-1. In Claude Desktop, click **Projects** in the sidebar
-2. Click **Create Project** and name it (e.g., "German with Herr Schmidt")
-3. Open the project, click **Set custom instructions**
-4. Paste the prompt content into the Instructions field
-5. Start a new conversation within that project
-
-Using a Project keeps the tutor persona scoped to language learning. Other conversations are unaffected.
-
-### Available languages and levels
-
-| Language | High School | 1st Year | 2nd Year | Advanced |
-|----------|-------------|----------|----------|----------|
-| German | Herr Schmidt | Professorin Weber | Professor Hartmann | Professor Becker |
-| Spanish | Profesora Elena | Profesor Garcia | Profesora Carmen | Profesora Reyes |
-| French | Madame Moreau | Professeur Laurent | Professeur Dubois | Professeur Beaumont |
-| Russian | Irina Petrovna | Professor Dmitri | Professor Natasha | Professor Mikhail |
-| Korean | Kim-seonsaengnim | Professor Park | Professor Kim | Professor Yoon |
-| Japanese | Tanaka-sensei | Yamamoto-sensei | Suzuki-sensei | Mori-sensei |
-| Chinese | Laoshi Wang | Professor Chen | Professor Zhang | Professor Wei |
-
-Each prompt creates a tutor persona calibrated to the student's level, based on [Mollick & Mollick's "Assigning AI" framework](https://ssrn.com/abstract=4475995). Customize any prompt by adjusting student background, voice selection, speech rate, or focus areas.
-
-## Quick Start
-
-Once Claude Desktop is set up, try these in a conversation:
-
-> "Say 'Guten Morgen' in German"
-
-> "Create an audio flashcard: 'good morning' in English, then 'Guten Morgen' in German"
-
-> "Synthesize these Spanish words as a merged audio file: hola, gracias, por favor, de nada"
-
-> "Generate pair flashcards for these German vocabulary words: strong/stark, house/Haus, book/Buch"
-
-Audio files are saved to your output directory (`~/langlearn-audio` by default) and play automatically.
 
 ## Voices
 
