@@ -5,29 +5,31 @@
 [![Tests](https://github.com/jmf-pobox/langlearn-tts-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jmf-pobox/langlearn-tts-mcp/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/pypi/pyversions/langlearn-tts)](https://pypi.org/project/langlearn-tts/)
 
-Generate audio flashcards and vocabulary drills from text. Ask Claude to synthesize words and phrases in any language, or batch-process entire vocabulary lists from the command line. Audio is slowed to 90% speed by default so learners can hear pronunciation clearly.
-
-The pair mode is the core workflow: give it an English word and its translation, and it produces a single MP3 — `[English audio] [pause] [target language audio]` — ready for Anki, spaced repetition, or passive listening.
-
-Available as both a **Claude Desktop MCP server** (ask Claude to generate audio in conversation) and a **CLI** with identical functionality. Supports **ElevenLabs** (highest quality, 70+ languages), **AWS Polly** (best per-language pronunciation, 93 voices), and **OpenAI TTS** (easiest setup, 9 voices).
+A Claude Desktop extension that gives Claude the ability to speak. Ask Claude to pronounce words, generate audio flashcards, or run a full language lesson with audio — in 70+ languages.
 
 ## Quick Start
 
-### 1. Install in Claude Desktop
+### 1. Get a TTS API key
 
-Download the `.mcpb` Desktop Extension bundle from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you to paste your API key and choose an output directory — no manual configuration needed. The provider is auto-detected from which API key you provide.
+You need an account with at least one text-to-speech provider:
 
-### 2. Set up a tutor project (optional)
+- [**ElevenLabs**](https://elevenlabs.io) — highest quality, 5,000+ voices, 70+ languages. Free tier: 10K chars/month.
+- [**AWS Polly**](https://aws.amazon.com/polly/) — best per-language pronunciation, 93 voices. Requires an AWS account ([setup guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)).
+- [**OpenAI TTS**](https://platform.openai.com/docs/guides/text-to-speech) — easiest setup, 9 voices, 57 languages.
 
-langlearn-tts ships with 28 ready-made AI tutor prompts — one for each combination of 7 languages and 4 levels. Setting up a project gives Claude a tutor persona that generates audio during lessons.
+### 2. Install in Claude Desktop
+
+Download the `.mcpb` Desktop Extension from the [latest release](https://github.com/jmf-pobox/langlearn-tts-mcp/releases/latest) and double-click to install. Claude Desktop will prompt you for your API key and an output directory.
+
+### 3. Set up a tutor project (optional)
+
+langlearn-tts ships with 28 tutor prompts — one for each combination of 7 languages and 4 levels. Setting up a project gives Claude a tutor persona that generates audio during lessons.
 
 1. In Claude Desktop, click **Projects** in the sidebar
 2. Click **Create Project** and name it (e.g., "German with Herr Schmidt")
 3. Open the project, click **Set custom instructions**
 4. Copy a prompt from the [prompts directory](https://github.com/jmf-pobox/langlearn-tts-mcp/tree/main/src/langlearn_tts/prompts) and paste it into the Instructions field
 5. Start a new conversation within that project
-
-Using a Project keeps the tutor persona scoped to language learning. Other conversations are unaffected.
 
 | Language | High School | 1st Year | 2nd Year | Advanced |
 |----------|-------------|----------|----------|----------|
@@ -41,7 +43,7 @@ Using a Project keeps the tutor persona scoped to language learning. Other conve
 
 Each prompt is calibrated to the student's level, based on [Mollick & Mollick's "Assigning AI" framework](https://ssrn.com/abstract=4475995).
 
-### 3. Try it out
+### 4. Try it out
 
 In any Claude Desktop conversation, try:
 
@@ -53,112 +55,41 @@ In any Claude Desktop conversation, try:
 
 > "Generate pair flashcards for these German vocabulary words: strong/stark, house/Haus, book/Buch"
 
-Audio files are saved to your output directory (`~/langlearn-audio` by default) and play automatically.
+Audio plays automatically after each request. Files are saved to your output directory (`~/langlearn-audio` by default).
 
 ## Features
 
-- **Single synthesis** — convert text to MP3 in any supported language
-- **Batch synthesis** — synthesize multiple texts, optionally merged into one file
-- **Pair synthesis** — stitch two languages together: `[English] [pause] [L2]`
-- **Pair batch** — batch-process vocabulary lists as stitched pairs
-- **Auto-play** — MCP tools play audio immediately after synthesis
-- **Configurable speech rate** — default 90% for learner-friendly pacing
-- **Three providers** — ElevenLabs (5,000+ voices, 70+ languages), AWS Polly (93 voices, 41 languages), or OpenAI TTS (9 voices, 57 languages)
-- **Voice settings** — ElevenLabs stability, similarity, style, and speaker boost controls
-- **Provider selection** — auto-detects ElevenLabs when `ELEVENLABS_API_KEY` is set; falls back to Polly; use `--provider` to override
+- **Pronounce anything** — ask Claude to say a word or phrase and hear it spoken aloud
+- **Audio flashcards** — Claude creates an MP3 with English first, then the target language, with a pause between them
+- **Vocabulary lists** — give Claude a list of words and get back individual or merged audio files
+- **70+ languages** — German, Spanish, French, Russian, Korean, Japanese, Chinese, and many more
+- **Tutor mode** — 28 built-in tutor personas that teach with audio throughout the lesson
+- **Multiple voices** — each provider offers a range of voices; ask Claude to use a specific one by name
+- **Adjustable speed** — audio defaults to 90% speed so learners can hear pronunciation clearly
 
-## Voices
+## Troubleshooting
 
-### ElevenLabs (premium)
+If something isn't working, ask Claude to run a health check:
 
-5,000+ voices. Any voice works with any language. Voice names are case-insensitive. You can also pass a voice ID directly (the 20-character alphanumeric string from the ElevenLabs dashboard).
+> "Run the doctor command to check if everything is set up correctly"
 
-Popular voices for language learning:
+Logs are written to `~/.langlearn-tts/logs/langlearn-tts.log` (never contains the text you synthesize). See [PRIVACY.md](PRIVACY.md) for details.
 
-| Voice | Description |
-|-------|-------------|
-| Rachel | Calm, clear, American English |
-| Drew | Warm, conversational |
-| Clyde | Deep, authoritative |
-| Domi | Expressive, young |
-| Bella | Soft, gentle |
+---
 
-Voice settings (ElevenLabs only):
+## Developer Reference
 
-| Flag | Range | Description |
-|------|-------|-------------|
-| `--stability` | 0.0-1.0 | Higher = more consistent, lower = more expressive |
-| `--similarity` | 0.0-1.0 | Higher = closer to original voice, lower = more variation |
-| `--style` | 0.0-1.0 | Higher = more expressive/dramatic |
-| `--speaker-boost` | flag | Enhances voice clarity at the cost of generation speed |
+Everything below is for developers using the CLI, integrating with other MCP clients, or contributing to the project.
 
-### AWS Polly
+### CLI Installation
 
-Any voice from the [AWS Polly voice list](https://docs.aws.amazon.com/polly/latest/dg/voicelist.html) is supported. Voice names are case-insensitive. Each voice is a dedicated neural model trained for a specific language, producing the most native-sounding pronunciation. The tool queries the Polly API on first use and caches the result.
-
-Common voices for language learning:
-
-| Voice | Language | Engine |
-|-------|----------|--------|
-| joanna | English (US) | neural |
-| matthew | English (US) | neural |
-| daniel | German | neural |
-| vicki | German (female) | neural |
-| lucia | Spanish (European) | neural |
-| lupe | Spanish (US) | neural |
-| léa | French | neural |
-| tatyana | Russian | standard |
-| seoyeon | Korean | neural |
-| takumi | Japanese | neural |
-| zhiyu | Chinese (Mandarin) | neural |
-
-The engine (neural, standard, generative, long-form) is selected automatically — neural preferred when available.
-
-### OpenAI TTS
-
-9 multilingual voices. Any voice works with any language — the model infers the language from the text. Voice names are case-insensitive. Pronunciation quality varies by language; major languages tend to be solid, less-resourced languages can be inconsistent.
-
-| Voice | Description |
-|-------|-------------|
-| alloy | Neutral, balanced |
-| ash | Warm, conversational |
-| coral | Clear, expressive |
-| echo | Smooth, authoritative |
-| fable | Warm, British-accented |
-| onyx | Deep, resonant |
-| nova | Friendly, upbeat |
-| sage | Calm, measured |
-| shimmer | Light, gentle |
-
-Default model: `tts-1`. Select with `--model tts-1` (faster, cheaper) or `--model tts-1-hd` (higher quality). See [OpenAI TTS pricing](https://platform.openai.com/docs/pricing) for current rates. Texts longer than 4,096 characters are automatically split and stitched.
-
-## CLI Installation
-
-### 1. Install uv (Python package manager)
-
-If you don't have `uv` yet:
-
-```bash
-# macOS / Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-uv manages Python versions automatically — you don't need to install Python separately.
-
-### 2. Install langlearn-tts
+Install [uv](https://docs.astral.sh/uv/) (manages Python automatically), then:
 
 ```bash
 uv tool install langlearn-tts
 ```
 
-This installs the `langlearn-tts` CLI and `langlearn-tts-server` MCP server globally.
-
-### 3. Install ffmpeg
-
-Required for audio stitching (pairs, merged batches). Single synthesis works without it.
+Install ffmpeg for audio stitching (pairs, merged batches):
 
 ```bash
 # macOS (requires Homebrew — install from https://brew.sh if needed)
@@ -170,57 +101,10 @@ brew install ffmpeg
 winget install --id Gyan.FFmpeg
 ```
 
-### 4. Configure a TTS provider
-
-Pick one provider. When `ELEVENLABS_API_KEY` is set, ElevenLabs is auto-detected as the default. Otherwise, Polly is the default.
-
-**Option A — ElevenLabs (premium, highest quality):**
-
-5,000+ voices, 70+ languages. The most expressive and natural-sounding TTS available. Supports voice settings (stability, similarity, style, speaker boost) for fine-tuning output. Default model: `eleven_v3`.
-
-```bash
-export ELEVENLABS_API_KEY=sk_...
-```
-
-Free tier: 10K chars/month. Paid plans start at $5/month.
-
-**Option B — AWS Polly (recommended, best pronunciation):**
-
-93 dedicated per-language neural voices, 41 languages. Each voice is trained for a specific language, producing natural pronunciation for language learning. Requires an AWS account with `polly:SynthesizeSpeech` and `polly:DescribeVoices` permissions.
-
-Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html), then:
-
-```bash
-aws configure
-```
-
-Enter your Access Key ID, Secret Access Key, and region (e.g., `us-east-1`). Alternatively, set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_DEFAULT_REGION` environment variables.
-
-**Option C — OpenAI TTS (easiest setup):**
-
-9 multilingual voices, 57 languages. Simpler to configure (one API key), but uses a single multilingual model for all languages. Pronunciation quality varies by language.
-
-```bash
-export OPENAI_API_KEY=sk-...
-```
-
-See [OpenAI TTS pricing](https://platform.openai.com/docs/pricing) for current rates.
-
-### 5. Verify
+Verify:
 
 ```bash
 langlearn-tts doctor
-```
-
-All required checks should show `✓`. Fix any that show `✗` before continuing.
-
-### From source (development)
-
-```bash
-git clone https://github.com/jmf-pobox/langlearn-tts-mcp.git
-cd langlearn-tts-mcp
-uv sync --all-extras
-uv run langlearn-tts --help
 ```
 
 ### Claude Desktop setup via CLI
@@ -231,7 +115,7 @@ langlearn-tts install
 
 Writes to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS). Options: `--provider NAME`, `--output-dir PATH`, `--uvx-path PATH`. Restart Claude Desktop after running.
 
-Or add manually to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Or add manually:
 
 ```json
 {
@@ -249,13 +133,6 @@ Or add manually to `~/Library/Application Support/Claude/claude_desktop_config.j
 
 Claude Desktop does not inherit your shell environment. API keys must be literal values (env var references are not supported). Restart after editing.
 
-### Browse tutor prompts
-
-```bash
-langlearn-tts prompt list
-langlearn-tts prompt show german-high-school | pbcopy
-```
-
 ### Environment variables
 
 | Env var | Required | Description |
@@ -268,11 +145,7 @@ langlearn-tts prompt show german-high-school | pbcopy
 
 For Polly, AWS credentials are read from `~/.aws/credentials`.
 
-### Other MCP clients
-
-langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
-
-## CLI Usage
+### CLI Usage
 
 ```bash
 # Single synthesis
@@ -303,9 +176,17 @@ langlearn-tts prompt list
 langlearn-tts prompt show german-high-school | pbcopy
 ```
 
-## MCP Tools
+### Voices
 
-All four tools are available in Claude Desktop once the server is configured:
+**ElevenLabs** — 5,000+ voices. Any voice works with any language. You can also pass a voice ID directly (the 20-character string from the ElevenLabs dashboard). Voice settings: `--stability`, `--similarity`, `--style` (0.0–1.0), `--speaker-boost` (flag).
+
+**AWS Polly** — 93 voices from the [AWS Polly voice list](https://docs.aws.amazon.com/polly/latest/dg/voicelist.html). Each voice is trained for a specific language. Engine (neural, standard, generative, long-form) is selected automatically.
+
+**OpenAI TTS** — 9 voices: alloy, ash, coral, echo, fable, onyx, nova, sage, shimmer. Default model: `tts-1`. Use `--model tts-1-hd` for higher quality.
+
+All voice names are case-insensitive.
+
+### MCP Tools
 
 | Tool | Description |
 |------|-------------|
@@ -316,30 +197,20 @@ All four tools are available in Claude Desktop once the server is configured:
 
 Each tool accepts `auto_play` (default: true) to play audio immediately after synthesis.
 
-## Troubleshooting
+### Other MCP clients
+
+langlearn-tts works with any MCP client that supports stdio transport. Use the server command `uvx --from langlearn-tts langlearn-tts-server` with the environment variables above. Find your `uvx` path with `which uvx` — all paths must be absolute.
+
+### Development
 
 ```bash
-langlearn-tts doctor
-```
-
-Checks Python version, active provider, ffmpeg, provider-specific credentials, `uvx`, Claude Desktop config, and output directory. Required checks must pass (exit code 1 on failure); optional checks show `○` markers. Failed checks include actionable fix hints.
-
-Logs are written to `~/.langlearn-tts/logs/langlearn-tts.log` (5 MB rotation, 5 backups). Logs record provider name, voice, and character count per API call — never the text you synthesize. See [PRIVACY.md](PRIVACY.md) for details.
-
-## Development
-
-```bash
-# Install with dev dependencies
+git clone https://github.com/jmf-pobox/langlearn-tts-mcp.git
+cd langlearn-tts-mcp
 uv sync --all-extras
 
-# Run tests
 uv run pytest tests/ -v
-
-# Linting and formatting
 uv run ruff check src/ tests/
 uv run ruff format src/ tests/
-
-# Type checking
 uv run mypy src/ tests/
 uv run pyright src/ tests/
 ```
